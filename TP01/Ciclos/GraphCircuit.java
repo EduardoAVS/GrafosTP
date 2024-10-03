@@ -41,22 +41,19 @@ public class GraphCircuit {
 
     public static class EncontrarCiclos{
         Grafo g;
-
-        boolean bloqueado[];
+        int teste = 0;
+        
+        boolean marcado[];
         List<List<Integer>> ciclos;
        
         List<Biconexo> listaBiconexo;
         Set<Aresta> arestasVisitadas;
         Set<Integer> ciclo;
-       
-    
-        public boolean visto(int v){
-            return bloqueado[v];
-        }
-
+ 
         public EncontrarCiclos(Grafo g){
 
-            bloqueado = new boolean[g.size()];
+            
+            marcado = new boolean[g.size()];
             ciclos = new ArrayList<>();
 
             this.g = g;
@@ -68,35 +65,43 @@ public class GraphCircuit {
 
         public List<List<Integer>> encontrarCiclos() {
             for (int v = 1; v < g.size(); v++) {
+                
                 List<Integer> caminho = new ArrayList<>();
-                dfs(v, v, caminho, new HashSet<>());
-                bloqueado[v] = true; // Evitar reprocessar vértices já visitados
+                dfs(v, 0, v, caminho, new boolean[g.size()]);
+                
             }
 
           
-            return eliminarDuplicados(ciclos);
+            return eliminarSubconjuntos(ciclos);
         }
 
         // Função recursiva DFS para explorar os ciclos
-        private void dfs(int v, int inicio, List<Integer> caminho, Set<Integer> visitado) {
+        private void dfs(int v, int pai, int inicio, List<Integer> caminho, boolean bloqueado[]) {
             caminho.add(v);
-            visitado.add(v); // Diminui a repeticão de ciclos mas não evita completamente
+            bloqueado[v] = true;
             
             for (int w : g.getAdjacentes(v)) {
 
-                if (w == inicio && caminho.size() > 2) { // Evita ciclos triviais ( < 2 vértices)
-                    ciclos.add(new ArrayList<>(caminho));
-                    
-                } else if (!visitado.contains(w) && !bloqueado[w]) {
-                    dfs(w, inicio, caminho, visitado);
+                Aresta oposta = new Aresta(w, v);
+                
+                // Verifica se a aresta já foi processada
+                if (!arestasVisitadas.contains(oposta)) { // Evita repetir a aresta
+                    arestasVisitadas.add(oposta);
+
+                    if (!bloqueado[w]) {
+                        dfs(w, v, inicio, caminho, bloqueado);
+                    }
+
+                    else if (w == inicio && caminho.size() > 2 && w != pai) { // Evita ciclos triviais ( < 2 vértices)
+                        ciclos.add(new ArrayList<>(caminho));
+                    }
                 }
             }
             
             caminho.remove(caminho.size() - 1);
-            visitado.remove(v);
         }
 
-        private List<List<Integer>> eliminarDuplicados(List<List<Integer>> ciclos){
+        private List<List<Integer>> eliminarSubconjuntos(List<List<Integer>> ciclos){
 
             Set<List<Integer>> subconjuntosRemovidos = new HashSet<>(); // Evita remover durante a iteracão
 
