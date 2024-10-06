@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.Stack;
 import java.util.List;
 import java.io.IOException; 
 
@@ -41,22 +42,19 @@ public class GraphCircuit {
 
     public static class EncontrarCiclos{
         Grafo g;
-
-        boolean bloqueado[];
+        int teste = 0;
+        
+        boolean marcado[];
         List<List<Integer>> ciclos;
        
         List<Biconexo> listaBiconexo;
         Set<Aresta> arestasVisitadas;
         Set<Integer> ciclo;
-       
-    
-        public boolean visto(int v){
-            return bloqueado[v];
-        }
-
+ 
         public EncontrarCiclos(Grafo g){
 
-            bloqueado = new boolean[g.size()];
+            
+            marcado = new boolean[g.size()];
             ciclos = new ArrayList<>();
 
             this.g = g;
@@ -68,64 +66,71 @@ public class GraphCircuit {
 
         public List<List<Integer>> encontrarCiclos() {
             for (int v = 1; v < g.size(); v++) {
-                List<Integer> caminho = new ArrayList<>();
-                dfs(v, v, caminho, new HashSet<>());
-                bloqueado[v] = true; // Evitar reprocessar vértices já visitados
+                
+                Stack<Integer> caminho = new Stack<>();
+                dfs(v, v, caminho, new boolean[g.size()]);
+                
             }
 
           
-            return eliminarDuplicados(ciclos);
+            return eliminarSubconjuntos(ciclos);
         }
 
         // Função recursiva DFS para explorar os ciclos
-        private void dfs(int v, int inicio, List<Integer> caminho, Set<Integer> visitado) {
+        private void dfs(int v, int inicio, Stack<Integer> caminho, boolean bloqueado[]) {
             caminho.add(v);
-            visitado.add(v); // Diminui a repeticão de ciclos mas não evita completamente
+            bloqueado[v] = true;
             
             for (int w : g.getAdjacentes(v)) {
+                Aresta duplicada = new Aresta(w, v); // Inverso da aresta A 
+                // Verifica se a aresta já foi processada
+                if (!arestasVisitadas.contains(duplicada)) { // Evita repetir a aresta
+                    arestasVisitadas.add(duplicada);
+                    if (w == inicio && caminho.size() > 2) { // Evita ciclos triviais ( < 2 vértices)
+                        ciclos.add(new ArrayList<>(caminho));
+                    }
 
-                if (w == inicio && caminho.size() > 2) { // Evita ciclos triviais ( < 2 vértices)
-                    ciclos.add(new ArrayList<>(caminho));
-                    
-                } else if (!visitado.contains(w) && !bloqueado[w]) {
-                    dfs(w, inicio, caminho, visitado);
+                    else if (!bloqueado[w]) {
+                        dfs(w, inicio, caminho, bloqueado);
+                    }
                 }
+                    
+                
             }
-            
-            caminho.remove(caminho.size() - 1);
-            visitado.remove(v);
+            //bloqueado[v] = false; Essa linha teoricamente tem mas se colocar ta piorando
+            caminho.pop();
+
         }
 
-        private List<List<Integer>> eliminarDuplicados(List<List<Integer>> ciclos){
+        private List<List<Integer>> eliminarSubconjuntos(List<List<Integer>> ciclos){
 
-            Set<List<Integer>> subconjuntosRemovidos = new HashSet<>(); // Evita remover durante a iteracão
+            // Ordenar os ciclos em ordem decrescente de tamanho para garantir que ciclos maiores sejam comparados primeiro
+            ciclos.sort((c1, c2) -> Integer.compare(c2.size(), c1.size()));
 
-            for (int i = 0; i < ciclos.size(); i++) {
+            List<List<Integer>> ciclosMaximais = new ArrayList<>();
 
-                Set<Integer> conjuntoI = new HashSet<>(ciclos.get(i)); // Converte o ciclo i para um Set
-    
-                for (int j = i + 1; j < ciclos.size(); j++) {
-                    
-                    Set<Integer> conjuntoJ = new HashSet<>(ciclos.get(j)); // Converte o ciclo j para um Set
+            // Percorrer cada ciclo e verificar se ele é um subconjunto de algum ciclo maior já processado
+            for (List<Integer> cicloAtual : ciclos) {
+                boolean isSubconjunto = false;
 
-                    // containsAll verifica se j é subconjunto de i
-                    if (conjuntoJ.containsAll(conjuntoI)) {
-                        subconjuntosRemovidos.add(ciclos.get(i));
+                // Verificar se o ciclo atual é subconjunto de algum ciclo já presente na lista de maximais
+                for (List<Integer> cicloMaximal : ciclosMaximais) {
+                    Set<Integer> conjuntoMaximal = new HashSet<>(cicloMaximal);
+                    Set<Integer> conjuntoAtual = new HashSet<>(cicloAtual);
+
+                    if (conjuntoMaximal.containsAll(conjuntoAtual)) {
+                        isSubconjunto = true;
+                        break; // Se já é subconjunto, não precisa continuar verificando
                     }
-
-                        // Se i for subconjunto de j remove i
-                    else if(conjuntoI.containsAll(conjuntoJ)) {
-                        subconjuntosRemovidos.add(ciclos.get(j));
-                    }
-                    
                 }
 
+                // Se o ciclo atual não for subconjunto de nenhum ciclo maior, adiciona ele aos ciclos maximais
+                if (!isSubconjunto) {
+                    ciclosMaximais.add(cicloAtual);
+                }
             }
 
-            ciclos.removeAll(subconjuntosRemovidos);
-
-            return ciclos;
-
+            return ciclosMaximais;
 
         }
         

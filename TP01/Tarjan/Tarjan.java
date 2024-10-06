@@ -87,34 +87,6 @@ public class Tarjan{
             return "[" + origem + ", " + destino + "]";
         }
     }
-
-    public static class Biconexo {
-        List<List<Integer>> componente;
-        int tGrafo;
-        public Biconexo(int tam){
-            componente = new ArrayList<>();
-            tGrafo = tam;
-            for (int i = 0; i < tam; i++) {
-                componente.add(new ArrayList<>());
-            }
-        }
-
-        public void addAresta(Aresta a){
-            int v = a.getOrigem();
-            int w = a.getDestino();
-            componente.get(v).add(w); // Adiciona os vértices na lista de adjacência um do outro
-            componente.get(w).add(v);
-        }
-
-        
-        public void imprimir(){
-            for(int i = 1; i < tGrafo; i++){
-               for(int j = 0; j < componente.get(i).size(); j++){
-                    System.out.print(" {" + i + ", " + componente.get(i).get(j) + "} ");
-               }
-            }
-        }
-    }
     
 
     public static class DFS{
@@ -127,7 +99,8 @@ public class Tarjan{
 
         Grafo g;
         Stack<Aresta> pilha;
-        List<Biconexo> listaBiconexo;
+
+        List<Set<Integer>> ciclos;
 
         public int getT(){
             return t;
@@ -156,7 +129,8 @@ public class Tarjan{
 
             this.g = g;
             pilha = new Stack<>();
-            listaBiconexo = new ArrayList<>();
+
+            ciclos = new ArrayList<>();
 
             dfs();
         }
@@ -193,19 +167,21 @@ public class Tarjan{
                         lowpt[v] = Math.min(lowpt[v], lowpt[w]);
 
                         if (lowpt[w] >= td[v]) {
-                            Biconexo comp = new Biconexo(g.size());
+                            Set<Integer> cicloAtual = new HashSet<Integer>();
+
                             Aresta topo = pilha.peek();
                             int u1 = topo.getOrigem();
 
                             while (td[u1] >= td[w]) {
                                 pilha.pop();
-                                comp.addAresta(topo);
+                                cicloAtual.add(u1);
                                 topo = pilha.peek();
                                 u1 = topo.getOrigem();
                             }
                             pilha.pop();
-                            comp.addAresta(topo);
-                            listaBiconexo.add(comp);
+                            cicloAtual.add(u1);
+                            cicloAtual.add(topo.getDestino());
+                            ciclos.add(cicloAtual);
                         }
                     } else if (td[w] < td[v] && w != u) {
                         pilha.push(a);
@@ -229,12 +205,9 @@ public class Tarjan{
         Grafo grafo = criarGrafo(arq);
         
         DFS dfs = new DFS(grafo);
-        int i = 0;
-        for(Biconexo b : dfs.listaBiconexo){
-            i++;
-            System.out.println("Componente " + i);
-            b.imprimir();
-            System.out.println();
+        
+        for(Set<Integer> ciclo : dfs.ciclos){
+            System.out.println(ciclo.toString());
         }
 
 
