@@ -1,4 +1,7 @@
-package Articulacao;
+// package Articulacao;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +67,43 @@ public class Grafo {
                 grafo.get(a[1]).add(a[0]);
             }
         }
+
+        public static Grafo criarGrafo(String arq) throws IOException{
+
+        FileReader fr = new FileReader(arq); 
+        BufferedReader br = new BufferedReader(fr);
+
+        int n = Integer.parseInt(br.readLine());
+
+        String linha = br.readLine();
+        linha.trim();
+
+
+        List<List<Integer>> listaAdjacencia = new ArrayList<>(n + 1);
+
+        // Inicializando as listas internas
+        for (int i = 0; i <= n; i++) {
+            listaAdjacencia.add(new ArrayList<>());
+        }
+
+        // Adicionando arestas
+        while((linha = br.readLine()) != null){
+            linha = linha.trim();
+                if (!linha.isEmpty()) {
+                    String[] teste = linha.split("\\s+");
+                    int entrada = Integer.parseInt(teste[0]);
+                    int saida = Integer.parseInt(teste[1]); 
+                    listaAdjacencia.get(entrada).add(saida);
+                    listaAdjacencia.get(saida).add(entrada); 
+                }            
+        }
+
+        Grafo grafo = new Grafo(listaAdjacencia);
+
+        br.close();
+
+        return grafo;
+    }
     }
 
     

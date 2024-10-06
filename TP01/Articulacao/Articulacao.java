@@ -1,4 +1,4 @@
-package Articulacao;
+// package Articulacao;
 // Metodo 2 - TP1
 
 import java.util.ArrayList;

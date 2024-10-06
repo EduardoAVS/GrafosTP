@@ -17,10 +17,10 @@ def salvarArquivo(grafo, nome_arquivo):
             f.write(f"{u + 1} {v + 1}\n")  
 
 # N = num de vertices / P = probabilidade Erdős-Rényi
-n = 15
+n = 1000
 p = 0.15
 grafo_conexo = Gerador(n, p) 
 
 # Salvar o grafo em arquivo
-salvarArquivo(grafo_conexo, "grafo100.txt")
+salvarArquivo(grafo_conexo, "grafo1000.txt")
 
