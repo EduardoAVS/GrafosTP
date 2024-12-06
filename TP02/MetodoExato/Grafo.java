@@ -6,10 +6,12 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Grafo{
-    private int[][] grafo;
-    private int nVertex; // Número de vértices + '0'
-    private int nEdge;
-    private int k;
+    public int[][] adjMatrix;
+    public int size; // Número de vértices + '0'
+    public int nEdge;
+    public int k;
+    public int radius;
+    public int[][] floydWarshall;
 
     public Grafo(String arq) throws IOException{
         FileReader fr = new FileReader(arq); 
@@ -24,7 +26,7 @@ public class Grafo{
         int k = Integer.parseInt(numeros[2]); // K
 
         int[][] adjMatrix = new int[n + 1][n + 1];
-        this.nVertex = n + 1; // Conta o valor do 0 no número de vértices
+        this.size = n;
         this.nEdge = e;
         this.k = k;
 
@@ -43,17 +45,46 @@ public class Grafo{
                 }            
         }
 
-        this.grafo = adjMatrix;
+        this.adjMatrix= adjMatrix;
+        this.radius = Integer.MAX_VALUE;
+        floydWarshall();
         br.close();
 
     }
 
+    public void floydWarshall() {
+        int[][] dist = new int[size + 1][size + 1];
+
+        // Inicializa a matriz de distâncias com os valores da matriz de adjacência
+        for (int i = 1; i <= size; i++) {
+            for (int j = 1; j <= size; j++) {
+                if (i == j) {
+                    dist[i][j] = 0; // A distância de um vértice para ele mesmo é 0
+                } else {
+                    dist[i][j] = adjMatrix[i][j] == 0 ? Integer.MAX_VALUE : adjMatrix[i][j];
+                }
+            }
+        }
+
+        // Algoritmo de Floyd-Warshall
+        for (int k = 1; k <= size; k++) {
+            for (int i = 1; i <= size; i++) {
+                for (int j = 1; j <= size; j++) {
+                    if (dist[i][k] != Integer.MAX_VALUE && dist[k][j] != Integer.MAX_VALUE) {
+                        dist[i][j] = Math.min(dist[i][j], dist[i][k] + dist[k][j]);
+                    }
+                }
+            }
+        }
+        floydWarshall = dist;
+    }
     public void imprimir(){
-        for(int i = 1; i < nVertex; i++){
-            for(int j = 1; j < nVertex; j++){
-                System.out.print(grafo[i][j] + " ");
+        for(int i = 1; i < size; i++){
+            for(int j = 1; j < size; j++){
+                System.out.print(adjMatrix[i][j] + " ");
             }
             System.out.println();
         }
     }
+
 }
