@@ -1,0 +1,4 @@
+Numero de clusters:10
+Centros encontrados: [97, 50, 18, 2, 38, 87, 71, 26, 75, 61]
+Raio: 182
+Tempo de execucao: 0.8287 ms

@@ -1,0 +1,4 @@
+Numero de clusters:10
+Centros encontrados: [800, 304, 65, 81, 530, 148, 646, 619, 622, 238]
+Raio: 68
+Tempo de execucao: 10.8484 ms

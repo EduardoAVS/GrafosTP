@@ -1,0 +1,4 @@
+Numero de clusters:5
+Centros encontrados: [192, 257, 59, 300, 268]
+Raio: 83
+Tempo de execucao: 2.8019 ms

@@ -1,0 +1,4 @@
+Numero de clusters:5
+Centros encontrados: [800, 594, 757, 151, 350]
+Raio: 45
+Tempo de execucao: 4.9124 ms

@@ -1,0 +1,4 @@
+Numero de clusters:10
+Centros encontrados: [32, 592, 403, 292, 420, 197, 135, 360, 490, 700]
+Raio: 83
+Tempo de execucao: 7.892 ms

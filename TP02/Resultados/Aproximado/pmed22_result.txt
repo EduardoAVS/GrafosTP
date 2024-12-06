@@ -1,0 +1,4 @@
+Numero de clusters:10
+Centros encontrados: [114, 500, 22, 440, 458, 394, 251, 460, 318, 415]
+Raio: 74
+Tempo de execucao: 6.8479 ms

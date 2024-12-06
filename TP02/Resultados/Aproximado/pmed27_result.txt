@@ -1,0 +1,4 @@
+Numero de clusters:10
+Centros encontrados: [416, 2, 50, 149, 71, 600, 552, 185, 25, 463]
+Raio: 66
+Tempo de execucao: 5.9558 ms

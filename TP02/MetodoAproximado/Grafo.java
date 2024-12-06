@@ -29,7 +29,6 @@ public class Grafo{
         this.nVertex = n + 1; // Conta o valor do 0 no número de vértices
         this.nEdge = e;
         this.k = k;
-        System.out.println("Número de clusters: "+k);
         // Adicionando arestas
         while((linha = br.readLine()) != null){
             linha = linha.trim();
