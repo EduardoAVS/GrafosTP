@@ -8,7 +8,6 @@ import java.util.Scanner;
 public class KcenterExact{
 
     // Gerar todas as combinações
-    static int iteracoes = 0;
 
     public static void combine(Grafo g) {
         
@@ -60,28 +59,31 @@ public class KcenterExact{
     public static int biggestRadius(List<Integer> combination, Grafo g){
         int r = 0;
         
-        int[] dist = new int[g.size + 1];
+        int[] distances = new int[g.size + 1];
         for (int i = 1; i <= g.size; i++)
-            dist[i] = Integer.MAX_VALUE;
+            distances[i] = Integer.MAX_VALUE;
 
 
         for(int c : combination){
             
             for(int i = 1; i < g.size; i++){
                 int d = g.floydWarshall[i][c];
-                if(d < dist[i]){
-                    dist[i] = d;
+                if(d < distances[i]){
+                    distances[i] = d;
                 }
                 
             }
         }
 
         for (int i = 1; i < g.size; i++)
-            if (dist[i] > r)
-                r = dist[i];
+            if (distances[i] > r)
+                r = distances[i];
 
-        if (r < g.radius)
+        if (r < g.radius){
             g.radius = r;
+            g.centers = combination;
+        }
+            
 
         return r;
     }
@@ -104,12 +106,9 @@ public class KcenterExact{
 
         long tempoFinal = System.nanoTime();
 
-        
-        System.out.println(iteracoes);
-
         System.out.println("Tempo de execucao é: " + (tempoFinal - tempoInicial)/ 1_000_000 + " milisegundos");
 
-        System.out.println("Raio: " + g.radius);
+        System.out.println("Raio: " + g.radius + "Centros: " + g.centers.toString());
         sc.close();
     }
 }

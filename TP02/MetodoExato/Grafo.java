@@ -4,6 +4,7 @@ package TP02.MetodoExato;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 public class Grafo{
     public int[][] adjMatrix;
@@ -12,6 +13,7 @@ public class Grafo{
     public int k;
     public int radius;
     public int[][] floydWarshall;
+    public List<Integer> centers;
 
     public Grafo(String arq) throws IOException{
         FileReader fr = new FileReader(arq); 
